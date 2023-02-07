@@ -45,8 +45,8 @@ start=time.time()
 for epoch in range(epuch_num):
     running_loss = 0.0
     # enumerate()是python自带的函数，用于迭代字典。参数1，是需要迭代的对象，第二参数是迭代的起始位置
-    for i,(inputs,labels) in enumerate(train_loader,0):
-        inputs,labels = inputs.to(device), labels.to(device)
+    for i,(inputs, labels) in enumerate(train_loader,0):
+        inputs, labels = inputs.to(device), labels.to(device)
 
         optimizer.zero_grad()# 将梯度初始化为0
         outputs = model(inputs)# 前向传播求出预测的值

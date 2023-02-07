@@ -1,28 +1,33 @@
-learning_rate: 0.001
-weight_decay: 0.0001
-optimizer: Adam
-
-batch_size: 16
+device: cuda:0
+fixed_size: [256, 192]
+num_joints: 17
+epoch_num: 1
+num_print: 50 # 每n个batch打印一次
+start_epoch: 0
+batch_size: 4
 train_shuffle: True
 drop_last: True
-
-
-step_size: 10 # 控制学习率变化
-epuch_num: 1 # 总的训练次数
-num_print: 10 # 每n个batch打印一次
 test_shuffle: False
 momentum: 0.8
 seed: 2023
-scaler: StandardScaler
 
+path:
+  data: ../data/coco2017
+  keypoints: ../trainer/person_keypoints.json
+  output: ../weights/save_weights
+  pre_weight: ../weights/pre_train/pose_coco/pose_hrnet_w32_256x192.pth
 lr_scheduler:
-  name: CosineAnnealingLR
-  T_max: 15
-  eta_min: 0.00001
+  name: MultiStepLR
+  lr_steps: [170, 200]
+  lr_gamma: 0.1
+  lr: 0.001
+optimizer:
+  name: AdamW
+  learning_rate: 0.001
+  weight_decay: 0.0001
+scaler:
+  name: StandardScaler
 
-# 训练配置文件
-model_config_path: config/train_config.yaml
-# 训练数据集的根目录
-data_path: data/COCO2017/
-# 关键点配置文件
-keypoints_path: annotations/person_keypoints.json
+
+
+

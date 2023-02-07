@@ -1,12 +1,14 @@
 import os
 import copy
 
+from utils import transforms
 import torch
 import numpy as np
 import cv2
 import torch.utils.data as data
 from pycocotools.coco import COCO
-from torchvision import transforms
+import json
+
 
 class CocoKeypoint(data.Dataset):
     def __init__(self,
@@ -80,15 +82,13 @@ class CocoKeypoint(data.Dataset):
 
                     self.valid_person_list.append(info)
                     obj_idx += 1
+        print("done ------------------------------------")
 
     def __getitem__(self, idx):
         target = copy.deepcopy(self.valid_person_list[idx])
 
         image = cv2.imread(target["image_path"])
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-        print(image)
-        print(target)
 
         if self.transforms is not None:
             image, person_info = self.transforms(image, target)
@@ -100,31 +100,37 @@ class CocoKeypoint(data.Dataset):
 
     @staticmethod
     def collate_fn(batch):
+        # batch = torch.Tensor(batch)
+        # print(type(batch))
         imgs_tuple, targets_tuple = tuple(zip(*batch))
+        # print(type(imgs_tuple[0]))
         imgs_tensor = torch.stack(imgs_tuple)
+        # print(type(imgs_tensor))
+        # print(len(imgs_tensor), ", ", len(targets_tuple))
         return imgs_tensor, targets_tuple
+
 
 class Mydata(data.Dataset):
 
-    def __init__(self,img_path):# 用于设置类中的变量
-        self.img_path=img_path
-        self.img_list=os.listdir(img_path)
+    def __init__(self, img_path):  # 用于设置类中的变量
+        self.img_path = img_path
+        self.img_list = os.listdir(img_path)
         print(self.img_list[0])
 
     def __getitem__(self, idx):
         img_name = self.img_list[idx]
-        img_item_path = os.path.join(self.img_path,img_name)
+        img_item_path = os.path.join(self.img_path, img_name)
         img = cv2.imread(img_item_path)
-        img = cv2.resize(img,(224,224),interpolation=cv2.INTER_LINEAR)
+        img = cv2.resize(img, (224, 224), interpolation=cv2.INTER_LINEAR)
         # 这里需要注意opencv独特图像存储方式
         trans = transforms.ToTensor()
         img = trans(img)
-        #img = torch.from_numpy(img)
-        #print(img.shape)
+        # img = torch.from_numpy(img)
+        # print(img.shape)
         label = 0
-        if img_name[0]=='c':
-            label=1
-        return img,label
+        if img_name[0] == 'c':
+            label = 1
+        return img, label
 
     def __len__(self):
         return len(self.img_list)
