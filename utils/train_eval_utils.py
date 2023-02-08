@@ -29,7 +29,6 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch,
     now_lr = 0
 
     print(metric_logger.log_every(data_loader, print_freq, header))
-    print("************")
 
     for i, [images, targets] in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
         images = torch.stack([image.to(device) for image in images])
