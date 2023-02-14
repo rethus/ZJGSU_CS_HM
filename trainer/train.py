@@ -4,9 +4,9 @@ import json
 import datetime
 import argparse
 
+import numpy as np
 import torch
 from torch.utils import data
-import numpy as np
 
 from utils import transforms
 from utils import train_eval_utils as teutils
