@@ -4,8 +4,8 @@ import json
 import datetime
 import argparse
 
-import numpy as np
 import torch
+import numpy as np
 from torch.utils import data
 
 from utils import transforms
