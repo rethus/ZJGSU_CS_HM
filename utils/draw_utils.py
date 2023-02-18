@@ -54,5 +54,4 @@ def draw_keypoints(img: Image,
                          outline=(255, 255, 255))
             if draw_text:
                 draw.text((point[0] + r, point[1] + r), text=point_name[i], font=font)
-
     return img

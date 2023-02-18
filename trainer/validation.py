@@ -92,7 +92,7 @@ def save_info(coco_evaluator,
 
     # 将验证结果保存至txt文件中
     with open(save_name, "w") as f:
-        record_lines = ["COCO results:", print_coco]
+        record_lines = ["OCHuman val results:", print_coco]
         f.write("\n".join(record_lines))
 
 
@@ -188,7 +188,7 @@ if __name__ == "__main__":
     parser.add_argument('--flip', type=bool, default=True, help='whether using flipped images')
 
     # 数据集的根目录
-    parser.add_argument('--data-path', default='../data/coco2017', help='dataset root')
+    parser.add_argument('--data-path', default='../data/ochuman', help='dataset root')
 
     # 训练好的权重文件
     parser.add_argument('--weights-path', default='../weights/pre_train/pose_coco/pose_hrnet_w32_256x192.pth', type=str,

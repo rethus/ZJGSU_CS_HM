@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 from models import HighResolutionNet
 from utils.draw_utils import draw_keypoints
-import utils.transforms
+from utils import transforms
 
 
 def predict_all_person():
@@ -22,8 +22,8 @@ def predict_single_person():
     # 翻转图片再测一次，取平均 √
     flip_test = True
     resize_hw = (256, 192)
-    img_path = "./person.png"
-    weights_path = "pre_train/pose_coco/pose_hrnet_w32_256x192.pth"
+    img_path = "../data/ochuman/val2017/000010.jpg"
+    weights_path = "../weights/pre_train/pose_coco/pose_hrnet_w32_256x192.pth"
     keypoint_json_path = "person_keypoints.json"
 
     assert os.path.exists(img_path), f"file: {img_path} does not exist."
