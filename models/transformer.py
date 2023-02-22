@@ -173,7 +173,7 @@ class VisionTransformer(nn.Module):
     def __init__(
             self,
             img_size=384,
-            patch_Size=16,
+            # img_size=(256, 192),
             patch_size=16,
             in_chans=3,
             n_classes=1000,
