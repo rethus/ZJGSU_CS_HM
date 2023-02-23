@@ -18,3 +18,4 @@ class KpLoss(object):
         loss = self.criterion(logits, heatmaps).mean(dim=[2, 3])
         loss = torch.sum(loss * kps_weights) / bs
         return loss
+

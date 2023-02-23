@@ -121,10 +121,10 @@ class Mydata(data.Dataset):
         img_name = self.img_list[idx]
         img_item_path = os.path.join(self.img_path, img_name)
         img = cv2.imread(img_item_path)
-        img = cv2.resize(img, (224, 224), interpolation=cv2.INTER_LINEAR)
+        img = cv2.resize(img, (256, 192), interpolation=cv2.INTER_LINEAR)
         # 这里需要注意opencv独特图像存储方式
         trans = transforms.ToTensor()
-        img = trans(img)
+        img = trans(img, img)
         # img = torch.from_numpy(img)
         # print(img.shape)
         label = 0

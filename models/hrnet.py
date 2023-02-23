@@ -246,6 +246,8 @@ class HighResolutionNet(nn.Module):
         self.final_layer = nn.Conv2d(base_channel, num_joints, kernel_size=1, stride=1)
 
     def forward(self, x):
+
+
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)

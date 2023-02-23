@@ -35,7 +35,6 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch,
         # 混合精度训练上下文管理器，如果在CPU环境中不起任何作用
         with torch.cuda.amp.autocast(enabled=scaler is not None):
             results = model(images)
-
             losses = mse(results, targets)
 
         # reduce losses over all GPUs for logging purpose

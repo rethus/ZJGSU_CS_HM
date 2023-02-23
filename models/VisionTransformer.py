@@ -45,9 +45,9 @@ class PatchEmbed(nn.Module):
         """
         x = self.proj(
             x
-        ) # (n_samples, embed_dim, n_patches ** 0.5, n_patches ** 0.5)
-        x = x.flatten(2) # (n_samples, embed_dim, n_patches)
-        x = x.transpose(1, 2) # (n_samples, n_patches, embed_dim)
+        )  # (n_samples, embed_dim, n_patches ** 0.5, n_patches ** 0.5)
+        x = x.flatten(2)  # (n_samples, embed_dim, n_patches)
+        x = x.transpose(1, 2)  # (n_samples, n_patches, embed_dim)
         return x
 
 
@@ -74,6 +74,7 @@ class Attention(nn.Module):
     attn_drop, proj_drop: nn.Dropout
         Dropout layers
     """
+
     def __init__(self, dim, n_heads=12, qkv_bias=True, attn_p=0., proj_p=0.):
         super().__init__()
         self.dim = dim
@@ -98,28 +99,28 @@ class Attention(nn.Module):
         if dim != self.dim:
             raise ValueError
 
-        qkv = self.qkv(x) # (n_samples, n_patches + 1, 3 * dim)
+        qkv = self.qkv(x)  # (n_samples, n_patches + 1, 3 * dim)
         qkv = qkv.reshape(
             n_samples, n_tokens, 3, self.n_heads, self.head_dim
-        ) # (n_samples, n_heads, n_patches + 1, head_dim)
+        )  # (n_samples, n_heads, n_patches + 1, head_dim)
         qkv = qkv.permute(
             2, 0, 3, 1, 4
-        ) # (3, n_samples, n_heads, n_patches + 1, head_dim)
+        )  # (3, n_samples, n_heads, n_patches + 1, head_dim)
         q, k, v = qkv[0], qkv[1], qkv[2]
-        k_t = k.transpose(-2, -1) # (n_samples, n_heads, head_dim, n_patches + 1)
+        k_t = k.transpose(-2, -1)  # (n_samples, n_heads, head_dim, n_patches + 1)
         dp = (
-            q @ k_t
-        ) * self.scale # (n_samples, n_heads, n_patches + 1, n_patches + 1)
-        attn = dp.softmax(dim=-1) # (n_samples, n_heads, n_patches + 1, n_patches + 1)
+                     q @ k_t
+             ) * self.scale  # (n_samples, n_heads, n_patches + 1, n_patches + 1)
+        attn = dp.softmax(dim=-1)  # (n_samples, n_heads, n_patches + 1, n_patches + 1)
 
-        weighted_avg = attn @ v # (n_samples, n_heads, n_patches + 1, head_dim)
+        weighted_avg = attn @ v  # (n_samples, n_heads, n_patches + 1, head_dim)
         weighted_avg = weighted_avg.transpose(
             1, 2
-        ) # (n_samples, n_patches + 1, n_heads, head_dim)
-        weighted_avg = weighted_avg.flatten(2) # (n_samples, n_patches + 1, dim)
+        )  # (n_samples, n_patches + 1, n_heads, head_dim)
+        weighted_avg = weighted_avg.flatten(2)  # (n_samples, n_patches + 1, dim)
 
-        x = self.proj(weighted_avg) # (n_samples, n_patches + 1, dim)
-        x = self.proj_drop(x) # (n_samples, n_patches, dim)
+        x = self.proj(weighted_avg)  # (n_samples, n_patches + 1, dim)
+        x = self.proj_drop(x)  # (n_samples, n_patches, dim)
 
         return x
 
@@ -133,11 +134,11 @@ class MLP(nn.Module):
         self.drop = nn.Dropout(p)
 
     def forward(self, x):
-        x = self.fc1(x) # (n_samples, n_patches + 1, hidden_features)
-        x = self.act(x) # (n_samples, n_patches + 1, hidden_features)
-        x = self.drop(x) # (n_samples, n_patches + 1, hidden_features)
-        x = self.fc2(x) # (n_samples, n_patches + 1, hidden_features)
-        x = self.drop(x) # (n_samples, n_patches + 1, hidden_features)
+        x = self.fc1(x)  # (n_samples, n_patches + 1, hidden_features)
+        x = self.act(x)  # (n_samples, n_patches + 1, hidden_features)
+        x = self.drop(x)  # (n_samples, n_patches + 1, hidden_features)
+        x = self.fc2(x)  # (n_samples, n_patches + 1, hidden_features)
+        x = self.drop(x)  # (n_samples, n_patches + 1, hidden_features)
 
         return x
 
@@ -165,18 +166,17 @@ class Block(nn.Module):
         x = x + self.attn(self.norm1(x))
         x = x + self.mlp(self.norm2(x))
 
-
         return x
 
 
 class VisionTransformer(nn.Module):
     def __init__(
             self,
-            img_size=384,
-            # img_size=(256, 192),
+            img_size=224,
+            # img_size=[256, 192),
             patch_size=16,
             in_chans=3,
-            n_classes=1000,
+            n_classes=17,
             embed_dim=768,
             depth=12,
             n_heads=12,
@@ -198,19 +198,17 @@ class VisionTransformer(nn.Module):
             torch.zeros(1, 1 + self.patch_embed.n_patches, embed_dim)
         )
         self.pos_drop = nn.Dropout(p=p)
-        self.blocks = nn.ModuleList(
-            [
-                Block(
-                    dim=embed_dim,
-                    n_heads=n_heads,
-                    mlp_ratio=mlp_ratio,
-                    qkv_bias=qkv_bias,
-                    p=p,
-                    attn_p=attn_p,
-                )
-                for _ in range(depth)
-            ]
-        )
+        self.blocks = nn.ModuleList([
+            Block(
+                dim=embed_dim,
+                n_heads=n_heads,
+                mlp_ratio=mlp_ratio,
+                qkv_bias=qkv_bias,
+                p=p,
+                attn_p=attn_p,
+            )
+            for _ in range(depth)
+        ])
         self.norm = nn.LayerNorm(embed_dim, eps=1e-6)
         self.head = nn.Linear(embed_dim, n_classes)
 
@@ -220,9 +218,9 @@ class VisionTransformer(nn.Module):
 
         cls_token = self.cls_token.expand(
             n_samples, -1, -1
-        ) # (n_samples, 1, emded_dim)
-        x = torch.cat((cls_token, x), dim=1) # (n_samples, 1 + n_patches, embed_dim)
-        x = x + self.pos_embed # (n_samples, 1 +n_patches, embed_dim)
+        )  # (n_samples, 1, emded_dim)
+        x = torch.cat((cls_token, x), dim=1)  # (n_samples, 1 + n_patches, embed_dim)
+        x = x + self.pos_embed  # (n_samples, 1 +n_patches, embed_dim)
         x = self.pos_drop(x)
 
         for block in self.blocks:
@@ -230,8 +228,7 @@ class VisionTransformer(nn.Module):
 
         x = self.norm(x)
 
-        cls_token_final = x[:, 0] # cls token
+        cls_token_final = x[:, 0]  # cls token
         x = self.head(cls_token_final)
 
         return x
-
