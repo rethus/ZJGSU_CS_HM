@@ -17,7 +17,8 @@ class CocoKeypoint(data.Dataset):
                  years="2017",
                  transforms=None,
                  det_json_path=None,
-                 fixed_size=(256, 192)):
+                 # fixed_size=(256, 192)):
+                 fixed_size=(224, 224)):
         super().__init__()
         assert dataset in ["train", "val"], 'dataset must be in ["train", "val"]'
         anno_file = f"person_keypoints_{dataset}{years}.json"

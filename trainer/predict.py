@@ -9,11 +9,23 @@ import matplotlib.pyplot as plt
 from models import HighResolutionNet
 from utils.draw_utils import draw_keypoints
 from utils import transforms
+from dataset.read_data import CocoKeypoint
 
-
+from torch.utils import data
 def predict_all_person():
-    # TODO
-    pass
+    train_dataset = CocoKeypoint(f"../data/coco2017/", dataset="train")
+    train_data_loader = data.DataLoader(train_dataset,
+                                        batch_size=1,
+                                        shuffle=True,
+                                        pin_memory=True,
+                                        num_workers=8,
+                                        collate_fn=train_dataset.collate_fn)
+    valid_person_list = train_dataset.valid_person_list
+    person_1 = valid_person_list[0]
+    person_1_keypoints = person_1['keypoints']
+    print(person_1_keypoints)
+    print(1)
+
 
 
 def predict_single_person():
@@ -82,4 +94,5 @@ def predict_single_person():
 
 
 if __name__ == '__main__':
-    predict_single_person()
+    # predict_single_person()
+    predict_all_person()

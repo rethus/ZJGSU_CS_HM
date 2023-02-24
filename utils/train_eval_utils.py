@@ -35,6 +35,9 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch,
         # 混合精度训练上下文管理器，如果在CPU环境中不起任何作用
         with torch.cuda.amp.autocast(enabled=scaler is not None):
             results = model(images)
+            # print(results.shape)
+            results = results.reshape(4, 17, 56, 56)
+            # print(results.shape)
             losses = mse(results, targets)
 
         # reduce losses over all GPUs for logging purpose
@@ -88,6 +91,8 @@ def evaluate(model, data_loader, device, flip=False, flip_pairs=None):
 
         model_time = time.time()
         outputs = model(images)
+        outputs = outputs.reshape(4, 17, 56, 56)
+
         if flip:
             flipped_images = transforms.flip_images(images)
             flipped_outputs = model(flipped_images)

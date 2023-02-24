@@ -110,6 +110,7 @@ def main(args):
                                         batch_size=batch_size,
                                         shuffle=True,
                                         pin_memory=True,
+                                        drop_last=True,
                                         num_workers=nw,
                                         collate_fn=train_dataset.collate_fn)
 
@@ -122,6 +123,7 @@ def main(args):
                                       batch_size=batch_size,
                                       shuffle=False,
                                       pin_memory=True,
+                                      drop_last=True,
                                       num_workers=nw,
                                       collate_fn=val_dataset.collate_fn)
 

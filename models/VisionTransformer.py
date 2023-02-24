@@ -173,10 +173,9 @@ class VisionTransformer(nn.Module):
     def __init__(
             self,
             img_size=224,
-            # img_size=[256, 192),
             patch_size=16,
             in_chans=3,
-            n_classes=17,
+            n_classes=53312,
             embed_dim=768,
             depth=12,
             n_heads=12,
