@@ -229,5 +229,5 @@ class VisionTransformer(nn.Module):
 
         cls_token_final = x[:, 0]  # cls token
         x = self.head(cls_token_final)
-
+        x = x.reshape(4, 17, 56, 56)
         return x
