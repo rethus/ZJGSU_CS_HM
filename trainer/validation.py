@@ -9,11 +9,11 @@ import torch
 from tqdm import tqdm
 import numpy as np
 
-from models import HighResolutionNet
+from models import HighResolutionNet, VisionTransformer
 from utils import EvalCOCOMetric
 from dataset.read_data import CocoKeypoint
 from utils import transforms
-
+from torch.utils import data
 
 def summarize(self, catId=None):
     """
@@ -126,15 +126,17 @@ def main(args):
 
     # VOCdevkit -> VOC2012 -> ImageSets -> Main -> val.txt
     # val_dataset = VOCInstances(data_root, year="2012", txt_name="val.txt", transforms=data_transform["val"])
-    val_dataset_loader = torch.utils.data.DataLoader(val_dataset,
+    val_dataset_loader = data.DataLoader(val_dataset,
                                                      batch_size=batch_size,
                                                      shuffle=False,
                                                      pin_memory=True,
+                                                     drop_last=True,
                                                      num_workers=nw,
                                                      collate_fn=val_dataset.collate_fn)
 
     # create model
-    model = HighResolutionNet()
+    # model = HighResolutionNet()
+    model = VisionTransformer()
 
     # 载入你自己训练好的模型权重
     weights_path = args.weights_path
@@ -191,8 +193,8 @@ if __name__ == "__main__":
     parser.add_argument('--data-path', default='../data/ochuman', help='dataset root')
 
     # 训练好的权重文件
-    parser.add_argument('--weights-path', default='../weights/pre_train/pose_coco/pose_hrnet_w32_256x192.pth', type=str,
-                        help='training weights')
+    # parser.add_argument('--weights-path', default='../weights/pre_train/pose_coco/pose_hrnet_w32_256x192.pth', type=str, help='training weights')
+    parser.add_argument('--weights-path', default='../weights/save_weights/model-0.pth', type=str, help='training weights')
 
     # batch size
     parser.add_argument('--batch-size', default=1, type=int, metavar='N',

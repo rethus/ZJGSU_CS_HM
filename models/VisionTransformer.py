@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import numpy as np
 
 
 class PatchEmbed(nn.Module):
@@ -27,7 +28,7 @@ class PatchEmbed(nn.Module):
         super().__init__()
         self.img_size = img_size
         self.patch_size = patch_size
-        self.n_patches = (img_size // patch_size) ** 2
+        self.n_patches = (img_size[0] // patch_size) * (img_size[1] // patch_size)
 
         self.proj = nn.Conv2d(
             in_chans,
@@ -172,7 +173,7 @@ class Block(nn.Module):
 class VisionTransformer(nn.Module):
     def __init__(
             self,
-            img_size=224,
+            img_size=[256, 192],
             patch_size=16,
             in_chans=3,
             n_classes=53312,
@@ -229,5 +230,5 @@ class VisionTransformer(nn.Module):
 
         cls_token_final = x[:, 0]  # cls token
         x = self.head(cls_token_final)
-        x = x.reshape(4, 17, 56, 56)
+
         return x

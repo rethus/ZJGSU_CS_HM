@@ -1,6 +1,6 @@
 device: cuda:0
-#fixed_size: [256, 192]
-fixed_size: [224, 224]
+fixed_size: [256, 192]
+#fixed_size: [224, 224]
 num_joints: 17
 epoch_num: 1
 num_print: 50 # 每n个batch打印一次

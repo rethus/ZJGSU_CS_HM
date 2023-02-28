@@ -21,7 +21,7 @@ def load_config(file_path):
 
 """
 torch.Size([4, 3, 224, 224])
-torch.Size([4, 17])
+torch.Size([4, 193, 768])
 
 torch.Size([4, 3, 256, 192])
 torch.Size([4, 17, 64, 48])
